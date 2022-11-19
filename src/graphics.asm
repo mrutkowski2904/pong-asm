@@ -3,7 +3,12 @@ default rel
 
 global setPixel
 global drawGameBoard
+global drawTitleScreen
 global drawBuffer
+global clearBuffer
+
+global DIMENSION_X
+global DIMENSION_Y
 
 extern system
 extern printf
@@ -59,7 +64,7 @@ drawGameBoard:
     mov [rbp - 4], BYTE 0 ; y loop counter
     mov [rbp - 5], BYTE 0 ; x loop counter
 
-_yLoop:
+_gameBoardYLoop:
     ; draw line in the middle
     mov dil, (DIMENSION_X / 2)
     mov sil, [rbp - 4]
@@ -78,9 +83,9 @@ _yLoop:
 
     inc BYTE [rbp - 4]
     cmp BYTE [rbp - 4], BYTE DIMENSION_Y
-    jl _yLoop
+    jl _gameBoardYLoop
 
-_xLoop:
+_gameBoardXLoop:
     ; draw upper and lower side border
     mov dil, [rbp - 5]
     mov sil, 0
@@ -93,7 +98,51 @@ _xLoop:
 
     inc BYTE [rbp - 5]
     cmp BYTE [rbp - 5], BYTE DIMENSION_X
-    jl _xLoop 
+    jl _gameBoardXLoop 
+
+    pop rbx
+    mov rsp, rbp
+    pop rbp
+    ret
+
+drawTitleScreen:
+    push rbp
+    mov rbp, rsp
+    sub rsp, 8
+    push rbx
+
+    mov [rbp - 4], BYTE 0 ; y loop counter
+    mov [rbp - 5], BYTE 0 ; x loop counter
+
+_titleScreenYLoop:
+    ; draw left and right side border
+    mov dil, (DIMENSION_X - 1)
+    mov sil, [rbp - 4]
+    mov dl, '*'
+    call setPixel
+    mov dil, 0
+    mov sil, [rbp - 4]
+    mov dl, '*'
+    call setPixel
+
+    inc BYTE [rbp - 4]
+    cmp BYTE [rbp - 4], BYTE DIMENSION_Y
+    jl _titleScreenYLoop
+
+_titleScreenXLoop:
+    ; draw upper and lower side border
+    mov dil, [rbp - 5]
+    mov sil, 0
+    mov dl, '*'
+    call setPixel
+    mov dil, [rbp - 5]
+    mov sil, (DIMENSION_Y - 1)
+    mov dl, '*'
+    call setPixel
+
+    inc BYTE [rbp - 5]
+    cmp BYTE [rbp - 5], BYTE DIMENSION_X
+    jl _titleScreenXLoop 
 
     pop rbx
     mov rsp, rbp
@@ -113,7 +162,7 @@ drawBuffer:
     mov [rbp - 4], BYTE 0 ; x loop counter
     mov [rbp - 5], BYTE 0 ; y loop counter
 
-_loop:
+_drawBufferLoop:
     ; calculate buffer index
     mov [rbp - 7], WORD 0
     xor rax, rax
@@ -138,7 +187,7 @@ _loop:
 
     ; if not end of line, jump to loop
     cmp BYTE[rbp - 4], BYTE DIMENSION_X
-    jl _loop
+    jl _drawBufferLoop
 
     ; else handle end of the line
     lea rdi, [newLineFormat]
@@ -147,7 +196,29 @@ _loop:
     mov [rbp - 4], BYTE 0 ; zero x counter
     inc BYTE[rbp - 5]
     cmp BYTE[rbp - 5], BYTE DIMENSION_Y
-    jl _loop
+    jl _drawBufferLoop
+
+    pop rbx
+    mov rsp, rbp
+    pop rbp
+    ret
+
+clearBuffer:
+    push rbp
+    mov rbp, rsp
+    sub rsp, 8
+    push rbx
+
+    mov QWORD [rbp - 8], ((DIMENSION_X * DIMENSION_Y) - 1)
+
+_clearBufferLoop:
+    mov rax, [rbp - 8]
+    dec QWORD [rbp - 8]
+    lea rbx, [graphicsBuffer]
+    add rbx, rax
+    mov BYTE [rbx], ' '
+    cmp QWORD [rbp - 8], 0
+    jne _clearBufferLoop
 
     pop rbx
     mov rsp, rbp

@@ -3,6 +3,7 @@ default rel
 
 global startKeyboardLoop
 global rawPressedKey
+global keyUpdated
 
 extern tcgetattr
 extern tcsetattr
@@ -11,7 +12,7 @@ extern usleep
 extern malloc
 extern clone
 
-STACK_SIZE equ 65536
+STACK_SIZE equ 4096
 
 ; clone flags
 CLONE_VM equ 0x00000100
@@ -33,6 +34,7 @@ _keyboardLoop:
 
     call nbgetch
     mov [rawPressedKey], rax
+    mov [keyUpdated], BYTE 1
 
     jmp _keyboardLoop
 
@@ -123,3 +125,4 @@ nbgetch:
 
 section .data
     rawPressedKey: db ' '
+    keyUpdated: db 0
