@@ -10,6 +10,7 @@ extern clearBuffer
 extern drawPaddle
 extern rawPressedKey
 extern keyUpdated
+extern setPixel
 
 extern dimensionX
 extern dimensionY
@@ -26,6 +27,11 @@ runGame:
     sub rsp, 16
 
     mov [rbp - 4], BYTE START_SCREEN
+    mov al, [dimensionY]
+    shr al, 1
+
+    mov [ballPosY], al
+    mov [ballPosX], BYTE 5
 
 _gameLoop:
 
@@ -65,6 +71,13 @@ _startScreenSkipKey:
 _handleGameplay:
     call drawGameBoard
     call handlePlayerInput
+    call handleBall
+
+    ; draw ball
+    mov dil, [ballPosX]
+    mov sil, [ballPosY]
+    mov dl, 'O'
+    call setPixel
 
     mov dil, 3
     mov sil, [playerY]
@@ -134,5 +147,62 @@ _handlePlayerInputEnd:
     pop rbp
     ret
 
+handleBall:
+    push rbp
+    mov rbp, rsp
+    push rbx
+    push r12
+
+    ; handle collision
+_handleBallYMaxCheck:
+    mov al, [dimensionY]
+    dec al
+    dec al
+
+    cmp [ballPosY], al
+    jne _handleBallYMinCheck
+    neg BYTE [ballSpeedY]
+
+_handleBallYMinCheck:
+    cmp [ballPosY], BYTE 1
+    jne _handleBallXMaxCheck
+    neg BYTE [ballSpeedY]
+
+_handleBallXMaxCheck:
+    ; TODO: Player scores
+    mov al, [dimensionX]
+    dec al
+    dec al
+
+    cmp [ballPosX], al
+    jne _handleBallXMinCheck
+    neg BYTE [ballSpeedX]
+
+_handleBallXMinCheck:
+    ; TODO: Computer scores
+    cmp [ballPosX], BYTE 1
+    jne _handleBallChecksEnd
+    neg BYTE [ballSpeedX]
+
+
+_handleBallChecksEnd:
+    ; update ball position
+    mov al, [ballSpeedX]
+    add [ballPosX], al
+
+    mov al, [ballSpeedY]
+    add [ballPosY], al
+
+    pop r12
+    pop rbx
+    mov rsp, rbp
+    pop rbp
+    ret
+
 section .data
     playerY: db 5
+
+    ballPosX: db 0
+    ballPosY: db 0
+    ballSpeedX: db 1
+    ballSpeedY: db 1

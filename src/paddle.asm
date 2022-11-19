@@ -2,7 +2,6 @@ bits 64
 default rel
 
 global drawPaddle
-global PADDLE_HEIGHT
 
 extern setPixel
 
