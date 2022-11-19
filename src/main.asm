@@ -11,6 +11,7 @@ extern drawGameBoard
 extern drawBuffer
 extern startKeyboardLoop
 extern rawPressedKey
+extern makeBeep
 
 section	.text
 gameLoopFunc:
@@ -28,7 +29,7 @@ _loop:
     call setPixel
     call drawBuffer
 
-    mov rdi, 10000
+    mov rdi, (77 * 1000)
     call usleep wrt ..plt
 
     mov bl, [runGame]
@@ -44,6 +45,7 @@ _loop:
 main:
     push rbp
 
+    call makeBeep
     call startKeyboardLoop
     call gameLoopFunc
 

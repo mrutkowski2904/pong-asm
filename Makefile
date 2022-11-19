@@ -1,4 +1,4 @@
-FILES = ./build/main.o ./build/draw.o ./build/keyboard.o
+FILES = ./build/main.o ./build/draw.o ./build/keyboard.o ./build/sound.o
 ASM_FLAGS = -g dwarf2 -f elf64 
 CC_FLAGS = -g
 
@@ -19,6 +19,9 @@ all: $(FILES)
 
 ./build/keyboard.o: src/keyboard.asm
 	yasm $(ASM_FLAGS) src/keyboard.asm -o ./build/keyboard.o -l ./build/keyboard.lst
+
+./build/sound.o: src/sound.asm
+	yasm $(ASM_FLAGS) src/sound.asm -o ./build/sound.o -l ./build/sound.lst
 
 clean:
 	rm build/*.o
