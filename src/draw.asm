@@ -13,7 +13,6 @@ DIMENSION_Y equ 15
 
 section .text
 
-; --- Function ---
 ; Sets pixel to specified ASCII value
 ; Args:
 ; dil - x
@@ -51,7 +50,6 @@ _setPixelEnd:
     pop rbp
     ret
 
-; --- Function ---
 drawGameBoard:
     push rbp
     mov rbp, rsp
@@ -102,7 +100,6 @@ _xLoop:
     pop rbp
     ret
 
-; --- Function ---
 drawBuffer:
     push rbp
     mov rbp, rsp

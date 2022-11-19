@@ -9,30 +9,33 @@ extern usleep
 extern setPixel
 extern drawGameBoard
 extern drawBuffer
+extern startKeyboardLoop
+extern rawPressedKey
 
 section	.text
 gameLoopFunc:
     push rbp
     mov rbp, rsp
     push rbx
+    push r12
 
 _loop:
-
     call drawGameBoard
-
+    
     mov dil, 20
     mov sil, 3
-    mov dl, 'a'
+    mov dl, [rawPressedKey]
     call setPixel
     call drawBuffer
 
-    mov rdi, 1000000
+    mov rdi, 10000
     call usleep wrt ..plt
 
     mov bl, [runGame]
     cmp bl, 1
     je _loop
 
+    pop r12
     pop rbx
     mov rsp, rbp
     pop rbp
@@ -40,11 +43,10 @@ _loop:
 
 main:
     push rbp
-    push rbx
 
+    call startKeyboardLoop
     call gameLoopFunc
 
-    pop rbx
     pop rbp
     mov rax, 0
     ret
