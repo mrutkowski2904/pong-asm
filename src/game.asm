@@ -7,9 +7,12 @@ extern drawBuffer
 extern drawTitleScreen
 extern drawGameBoard
 extern clearBuffer
-
+extern drawPaddle
 extern rawPressedKey
 extern keyUpdated
+
+extern dimensionX
+extern dimensionY
 
 extern usleep
 
@@ -61,6 +64,12 @@ _startScreenSkipKey:
 ;=================================================
 _handleGameplay:
     call drawGameBoard
+    call handlePlayerInput
+
+    mov dil, 3
+    mov sil, [playerY]
+    call drawPaddle
+
     jmp _gameLoopRepeat
 ;=================================================
 ; END: GAMEPLAY LOGIC
@@ -68,7 +77,6 @@ _handleGameplay:
 
 
 _gameLoopRepeat:
-
     ; draw new screen
     call drawBuffer
 
@@ -77,9 +85,54 @@ _gameLoopRepeat:
     call usleep wrt ..plt
 
     call clearBuffer
-
     jmp _gameLoop
 
     mov rsp, rbp
     pop rbp
     ret
+
+
+handlePlayerInput:
+    push rbp
+    mov rbp, rsp
+    push rbx
+    push r12
+
+    cmp [keyUpdated], BYTE 1
+    jne _handlePlayerInputEnd
+
+    mov [keyUpdated], BYTE 0
+
+    cmp [rawPressedKey], BYTE 'w'
+    je _handleUpKey
+
+    cmp [rawPressedKey], BYTE 's'
+    je _handleDownKey
+
+    jmp _handlePlayerInputEnd
+
+_handleUpKey:
+    cmp [playerY], BYTE 1
+    je _handlePlayerInputEnd
+
+    dec BYTE [playerY]
+    jmp _handlePlayerInputEnd
+
+_handleDownKey:
+    mov bl, [dimensionY]
+    sub bl, 5
+    cmp [playerY], bl 
+    je _handlePlayerInputEnd
+
+    inc BYTE [playerY]
+    jmp _handlePlayerInputEnd
+
+_handlePlayerInputEnd:
+    pop r12
+    pop rbx
+    mov rsp, rbp
+    pop rbp
+    ret
+
+section .data
+    playerY: db 5

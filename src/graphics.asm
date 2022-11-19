@@ -7,8 +7,8 @@ global drawTitleScreen
 global drawBuffer
 global clearBuffer
 
-global DIMENSION_X
-global DIMENSION_Y
+global dimensionX
+global dimensionY
 
 extern system
 extern printf
@@ -230,3 +230,5 @@ section .data
     newLineFormat: db 10, 0
     graphicsBuffer: TIMES (DIMENSION_X * DIMENSION_Y) db ' '
     clearCmd: db "clear", 0
+    dimensionX: db DIMENSION_X
+    dimensionY: db DIMENSION_Y
