@@ -3,8 +3,9 @@ default rel
 
 global runGame
 
+extern exitGame
 extern drawBuffer
-extern drawTitleScreen
+extern drawBorder
 extern drawGameBoard
 extern clearBuffer
 extern drawPaddle
@@ -12,6 +13,7 @@ extern rawPressedKey
 extern keyUpdated
 extern setPixel
 extern makeBeep
+extern drawText
 
 extern dimensionX
 extern dimensionY
@@ -28,7 +30,9 @@ runGame:
     mov rbp, rsp
     sub rsp, 16
 
+    mov [rbp - 3], BYTE 0 ; underline counter
     mov [rbp - 4], BYTE START_SCREEN
+
     mov al, [dimensionY]
     shr al, 1
 
@@ -50,7 +54,28 @@ _gameLoop:
 ; START: TITLE SCREEN LOGIC
 ;=================================================
 _handleStartScreen:
-    call drawTitleScreen
+    call drawBorder
+
+    mov dil, 25
+    mov sil, 5
+    lea rdx, [gameTitle]
+    call drawText
+
+    ; draw horizontal line under title
+    mov [rbp - 3], BYTE 25
+_handleStartScreenUnderlineLoop:
+
+    mov al, [rbp - 3]
+    mov dil, 21
+    add dil, al
+    mov sil, 10
+    mov dl, '*'
+    call setPixel
+
+    dec BYTE [rbp - 3]
+    cmp BYTE [rbp - 3], 0
+    jne _handleStartScreenUnderlineLoop
+
 
     ; handle key press on start screen
     cmp [keyUpdated], BYTE 1
@@ -184,6 +209,7 @@ _handleBallXMinCheck:
     jne _handleBallCheckPlayerPaddle
     neg BYTE [ballSpeedX]
     ; TODO: Computer scores
+    call exitGame
     call makeBeep
 
 _handleBallCheckPlayerPaddle:
@@ -217,6 +243,8 @@ _handleBallChecksEnd:
     ret
 
 section .data
+    gameTitle: db 'pong', 0
+
     playerY: db 5
 
     ballPosX: db 0

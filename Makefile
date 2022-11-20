@@ -1,4 +1,4 @@
-FILES = ./build/main.o ./build/graphics.o ./build/keyboard.o ./build/sound.o ./build/game.o ./build/paddle.o
+FILES = ./build/main.o ./build/graphics.o ./build/keyboard.o ./build/sound.o ./build/game.o ./build/paddle.o ./build/font.o
 ASM_FLAGS = -g -F dwarf -f elf64
 CC_FLAGS = -g
 
@@ -28,6 +28,9 @@ all: $(FILES)
 
 ./build/paddle.o: src/paddle.asm
 	nasm $(ASM_FLAGS) src/paddle.asm -o ./build/paddle.o -l ./build/paddle.lst
+
+./build/font.o: src/font.asm
+	nasm $(ASM_FLAGS) src/font.asm -o ./build/font.o -l ./build/font.lst
 
 clean:
 	rm build/*.o

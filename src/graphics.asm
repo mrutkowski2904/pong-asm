@@ -3,7 +3,7 @@ default rel
 
 global setPixel
 global drawGameBoard
-global drawTitleScreen
+global drawBorder
 global drawBuffer
 global clearBuffer
 
@@ -71,11 +71,17 @@ drawGameBoard:
 
 _gameBoardYLoop:
     ; draw line in the middle
+    mov sil, [rbp - 4]
+    and sil, 1
+    cmp sil, 0
+    je _gameBoardYLoopSkipMiddle
+
     mov dil, (DIMENSION_X / 2)
     mov sil, [rbp - 4]
     mov dl, '|'
     call setPixel
 
+_gameBoardYLoopSkipMiddle:
     ; draw left and right side border
     mov dil, (DIMENSION_X - 1)
     mov sil, [rbp - 4]
@@ -110,7 +116,7 @@ _gameBoardXLoop:
     pop rbp
     ret
 
-drawTitleScreen:
+drawBorder:
     push rbp
     mov rbp, rsp
     sub rsp, 8
@@ -119,7 +125,7 @@ drawTitleScreen:
     mov [rbp - 4], BYTE 0 ; y loop counter
     mov [rbp - 5], BYTE 0 ; x loop counter
 
-_titleScreenYLoop:
+_drawBorderYLoop:
     ; draw left and right side border
     mov dil, (DIMENSION_X - 1)
     mov sil, [rbp - 4]
@@ -132,9 +138,9 @@ _titleScreenYLoop:
 
     inc BYTE [rbp - 4]
     cmp BYTE [rbp - 4], BYTE DIMENSION_Y
-    jl _titleScreenYLoop
+    jl _drawBorderYLoop
 
-_titleScreenXLoop:
+_drawBorderXLoop:
     ; draw upper and lower side border
     mov dil, [rbp - 5]
     mov sil, 0
@@ -147,7 +153,7 @@ _titleScreenXLoop:
 
     inc BYTE [rbp - 5]
     cmp BYTE [rbp - 5], BYTE DIMENSION_X
-    jl _titleScreenXLoop 
+    jl _drawBorderXLoop 
 
     pop rbx
     mov rsp, rbp
