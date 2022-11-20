@@ -14,7 +14,7 @@ extern system
 extern printf
 
 DIMENSION_X equ 70
-DIMENSION_Y equ 19
+DIMENSION_Y equ 23
 
 section .text
 
@@ -29,10 +29,15 @@ setPixel:
     push rbx
     push r12
 
-    cmp dil, BYTE DIMENSION_X
-    jge _setPixelEnd
-    cmp sil, BYTE DIMENSION_Y
-    jge _setPixelEnd
+    cmp dil, BYTE (DIMENSION_X - 1)
+    jg _setPixelEnd
+    cmp sil, BYTE (DIMENSION_Y - 1)
+    jg _setPixelEnd
+
+    cmp dil, BYTE 0
+    jl _setPixelEnd
+    cmp sil, BYTE 0
+    jl _setPixelEnd
 
     xor rax, rax
     mov al, sil
@@ -178,9 +183,13 @@ _drawBufferLoop:
     
     lea rsi, [graphicsBuffer] 
     add rsi, rax
-    mov rsi, [rsi]
+    mov sil, [rsi]
     xor rdx, rdx
+    lea rdi, [emptyPixelFormat]
+    cmp sil, ' '
+    je _drawBufferPrintf
     lea rdi, [pixelFormat]
+_drawBufferPrintf:
     call printf wrt ..plt
 
     inc BYTE[rbp - 4]
@@ -226,9 +235,10 @@ _clearBufferLoop:
     ret
 
 section .data
-    pixelFormat: db "%c", 0
+    pixelFormat : db `\033[107;97m%c\033[0m`, 0 ; white bg and fg
+    emptyPixelFormat: db ` `, 0
     newLineFormat: db 10, 0
     graphicsBuffer: TIMES (DIMENSION_X * DIMENSION_Y) db ' '
-    clearCmd: db "clear", 0
+    clearCmd: db "printf '\033[;H'", 0 ; move cursor to the top
     dimensionX: db DIMENSION_X
     dimensionY: db DIMENSION_Y

@@ -11,6 +11,7 @@ extern drawPaddle
 extern rawPressedKey
 extern keyUpdated
 extern setPixel
+extern makeBeep
 
 extern dimensionX
 extern dimensionY
@@ -19,6 +20,7 @@ extern usleep
 
 START_SCREEN equ 0
 GAME_SCREEN equ 1
+PLAYER_X equ 3
 
 section .text
 runGame:
@@ -34,7 +36,6 @@ runGame:
     mov [ballPosX], BYTE 5
 
 _gameLoop:
-
     ; detect state
     ; title screen
     cmp [rbp - 4], BYTE START_SCREEN
@@ -79,7 +80,7 @@ _handleGameplay:
     mov dl, 'O'
     call setPixel
 
-    mov dil, 3
+    mov dil, PLAYER_X
     mov sil, [playerY]
     call drawPaddle
 
@@ -93,8 +94,8 @@ _gameLoopRepeat:
     ; draw new screen
     call drawBuffer
 
-    ; wait for 77 ms before next game update
-    mov rdi, (77 * 1000)
+    ; wait before next game update
+    mov rdi, (40 * 1000)
     call usleep wrt ..plt
 
     call clearBuffer
@@ -169,7 +170,6 @@ _handleBallYMinCheck:
     neg BYTE [ballSpeedY]
 
 _handleBallXMaxCheck:
-    ; TODO: Player scores
     mov al, [dimensionX]
     dec al
     dec al
@@ -177,13 +177,30 @@ _handleBallXMaxCheck:
     cmp [ballPosX], al
     jne _handleBallXMinCheck
     neg BYTE [ballSpeedX]
+    ; TODO: Player scores
 
 _handleBallXMinCheck:
-    ; TODO: Computer scores
     cmp [ballPosX], BYTE 1
-    jne _handleBallChecksEnd
+    jne _handleBallCheckPlayerPaddle
     neg BYTE [ballSpeedX]
+    ; TODO: Computer scores
+    call makeBeep
 
+_handleBallCheckPlayerPaddle:
+    cmp [ballPosX], BYTE (PLAYER_X + 1)
+    jne _handleBallChecksEnd
+
+    mov al, [playerY]
+    cmp [ballPosY], al
+    jl _handleBallChecksEnd
+
+    add al, 4
+    cmp [ballPosY], al
+    jg _handleBallChecksEnd
+
+    ; bounce
+    neg BYTE [ballSpeedX]
+    ; neg BYTE [ballSpeedY]
 
 _handleBallChecksEnd:
     ; update ball position
