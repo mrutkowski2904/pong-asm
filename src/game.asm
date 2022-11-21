@@ -14,6 +14,7 @@ extern keyUpdated
 extern setPixel
 extern makeBeep
 extern drawText
+extern drawDigit
 
 extern dimensionX
 extern dimensionY
@@ -61,6 +62,11 @@ _handleStartScreen:
     lea rdx, [gameTitle]
     call drawText
 
+    mov dil, 23
+    mov sil, 12
+    lea rdx, [authorText]
+    call drawText
+
     ; draw horizontal line under title
     mov [rbp - 3], BYTE 25
 _handleStartScreenUnderlineLoop:
@@ -98,6 +104,20 @@ _handleGameplay:
     call drawGameBoard
     call handlePlayerInput
     call handleBall
+
+    ; draw player and computer score
+    ; mov dil, [dimensionX]
+    ; shr dil, 1
+    ; sub dil, 7
+    ; mov sil, 2
+    ; mov dl, [playerScore]
+    ; call drawDigit
+    ; mov dil, [dimensionX]
+    ; shr dil, 1
+    ; add dil, 3
+    ; mov sil, 2
+    ; mov dl, [computerScore]
+    ; call drawDigit
 
     ; draw ball
     mov dil, [ballPosX]
@@ -202,14 +222,20 @@ _handleBallXMaxCheck:
     cmp [ballPosX], al
     jne _handleBallXMinCheck
     neg BYTE [ballSpeedX]
+
     ; TODO: Player scores
+    ; inc BYTE [playerScore]
+
 
 _handleBallXMinCheck:
     cmp [ballPosX], BYTE 1
     jne _handleBallCheckPlayerPaddle
     neg BYTE [ballSpeedX]
+
     ; TODO: Computer scores
-    call exitGame
+    ; inc BYTE [computerScore]
+
+    ; call exitGame
     call makeBeep
 
 _handleBallCheckPlayerPaddle:
@@ -244,6 +270,7 @@ _handleBallChecksEnd:
 
 section .data
     gameTitle: db 'pong', 0
+    authorText: db 'by mr', 0
 
     playerY: db 5
 
@@ -251,3 +278,6 @@ section .data
     ballPosY: db 0
     ballSpeedX: db 1
     ballSpeedY: db 1
+
+    ; playerScore : db 3
+    ; computerScore: db 2
