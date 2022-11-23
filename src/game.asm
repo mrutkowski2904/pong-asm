@@ -25,6 +25,7 @@ extern usleep
 START_SCREEN equ 0
 GAME_SCREEN equ 1
 PLAYER_X equ 3
+COMPUTER_X equ 66
 
 section .text
 runGame:
@@ -32,16 +33,18 @@ runGame:
     mov rbp, rsp
     sub rsp, 16
 
+    mov [rbp - 2], BYTE 0 ; player and computer lives counter
     mov [rbp - 3], BYTE 0 ; underline counter
     mov [rbp - 4], BYTE START_SCREEN
 
+    call resetBall
     mov al, [dimensionY]
     shr al, 1
+    sub al, 2
+    mov [playerY], al
+    mov [computerY], al
 
-    mov [ballPosY], al
-    mov [ballPosX], BYTE 5
-
-_gameLoop:
+    _gameLoop:
     ; detect state
     ; title screen
     cmp [rbp - 4], BYTE START_SCREEN
@@ -55,7 +58,7 @@ _gameLoop:
 ;=================================================
 ; START: TITLE SCREEN LOGIC
 ;=================================================
-_handleStartScreen:
+    _handleStartScreen:
     call drawBorder
 
     mov dil, 25
@@ -68,11 +71,9 @@ _handleStartScreen:
     lea rdx, [authorText]
     call drawText
 
-
-
     ; draw horizontal line under title
     mov [rbp - 3], BYTE 25
-_handleStartScreenUnderlineLoop:
+    _handleStartScreenUnderlineLoop:
 
     mov al, [rbp - 3]
     mov dil, 21
@@ -93,7 +94,7 @@ _handleStartScreenUnderlineLoop:
     mov [keyUpdated], BYTE 0
     mov [rbp - 4], BYTE GAME_SCREEN
 
-_startScreenSkipKey:
+    _startScreenSkipKey:
     jmp _gameLoopRepeat
 ;=================================================
 ; END: TITLE SCREEN LOGIC
@@ -103,24 +104,34 @@ _startScreenSkipKey:
 ;=================================================
 ; START: GAMEPLAY LOGIC
 ;=================================================
-_handleGameplay:
+    _handleGameplay:
     call drawGameBoard
     call handlePlayerInput
     call handleBall
 
-    ; draw player and computer score
-    ; mov dil, [dimensionX]
-    ; shr dil, 1
-    ; sub dil, 7
-    ; mov sil, 2
-    ; mov dl, [playerScore]
-    ; call drawDigit
-    ; mov dil, [dimensionX]
-    ; shr dil, 1
-    ; add dil, 3
-    ; mov sil, 2
-    ; mov dl, [computerScore]
-    ; call drawDigit
+    ; draw player lives
+    mov [rbp - 2], BYTE 0
+    mov al, 3
+    _drawPlayerLivesLoop:
+    mov ah, [playerLives]
+    cmp BYTE [rbp - 2], ah
+    je _drawPlayerLivesLoopEnd
+
+    add al, 2
+    mov dil, al
+    mov sil, 2
+    mov dl, '#'
+    call setPixel
+
+    inc BYTE [rbp - 2]
+    jmp _drawPlayerLivesLoop
+    _drawPlayerLivesLoopEnd:
+
+    ; draw computer lives
+    _drawComputerLivesLoop:
+
+
+    _drawComputerLivesLoopEnd:
 
     ; draw ball
     mov dil, [ballPosX]
@@ -132,13 +143,17 @@ _handleGameplay:
     mov sil, [playerY]
     call drawPaddle
 
+    mov dil, COMPUTER_X
+    mov sil, [computerY]
+    call drawPaddle
+
     jmp _gameLoopRepeat
 ;=================================================
 ; END: GAMEPLAY LOGIC
 ;=================================================
 
 
-_gameLoopRepeat:
+    _gameLoopRepeat:
     ; draw new screen
     call drawBuffer
 
@@ -173,14 +188,14 @@ handlePlayerInput:
 
     jmp _handlePlayerInputEnd
 
-_handleUpKey:
+    _handleUpKey:
     cmp [playerY], BYTE 1
     je _handlePlayerInputEnd
 
     dec BYTE [playerY]
     jmp _handlePlayerInputEnd
 
-_handleDownKey:
+    _handleDownKey:
     mov bl, [dimensionY]
     sub bl, 5
     cmp [playerY], bl 
@@ -189,7 +204,7 @@ _handleDownKey:
     inc BYTE [playerY]
     jmp _handlePlayerInputEnd
 
-_handlePlayerInputEnd:
+    _handlePlayerInputEnd:
     pop r12
     pop rbx
     mov rsp, rbp
@@ -203,7 +218,7 @@ handleBall:
     push r12
 
     ; handle collision
-_handleBallYMaxCheck:
+    _handleBallYMaxCheck:
     mov al, [dimensionY]
     dec al
     dec al
@@ -212,12 +227,12 @@ _handleBallYMaxCheck:
     jne _handleBallYMinCheck
     neg BYTE [ballSpeedY]
 
-_handleBallYMinCheck:
+    _handleBallYMinCheck:
     cmp [ballPosY], BYTE 1
     jne _handleBallXMaxCheck
     neg BYTE [ballSpeedY]
 
-_handleBallXMaxCheck:
+    _handleBallXMaxCheck:
     mov al, [dimensionX]
     dec al
     dec al
@@ -228,20 +243,27 @@ _handleBallXMaxCheck:
 
     ; TODO: Player scores
     ; inc BYTE [playerScore]
+    call resetBall
+    mov rdi, (350 * 1000)
+    call usleep wrt ..plt
+    neg BYTE [ballSpeedX]
 
 
-_handleBallXMinCheck:
+    _handleBallXMinCheck:
     cmp [ballPosX], BYTE 1
     jne _handleBallCheckPlayerPaddle
     neg BYTE [ballSpeedX]
 
     ; TODO: Computer scores
-    ; inc BYTE [computerScore]
+    dec BYTE [playerLives]
+    call resetBall
+    mov rdi, (350 * 1000)
+    call usleep wrt ..plt
 
     ; call exitGame
     call makeBeep
 
-_handleBallCheckPlayerPaddle:
+    _handleBallCheckPlayerPaddle:
     cmp [ballPosX], BYTE (PLAYER_X + 1)
     jne _handleBallChecksEnd
 
@@ -257,7 +279,7 @@ _handleBallCheckPlayerPaddle:
     neg BYTE [ballSpeedX]
     ; neg BYTE [ballSpeedY]
 
-_handleBallChecksEnd:
+    _handleBallChecksEnd:
     ; update ball position
     mov al, [ballSpeedX]
     add [ballPosX], al
@@ -271,16 +293,26 @@ _handleBallChecksEnd:
     pop rbp
     ret
 
+resetBall:
+    mov al, [dimensionY]
+    shr al, 1
+    mov [ballPosY], al
+    mov al, [dimensionX]
+    shr al, 2
+    mov [ballPosX], al
+    ret
+
 section .data
     gameTitle: db 'pong', 0
     authorText: db 'by mr', 0
 
-    playerY: db 5
+    playerY: db 1
+    computerY: db 1
 
     ballPosX: db 0
     ballPosY: db 0
     ballSpeedX: db 1
     ballSpeedY: db 1
 
-    ; playerScore : db 3
-    ; computerScore: db 2
+    playerLives: db 3
+    computerLives: db 3

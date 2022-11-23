@@ -28,7 +28,7 @@ keyboardLoop:
     push rbp
     mov rbp, rsp
 
-_keyboardLoop:
+    _keyboardLoop:
     mov rdi, 1000
     call usleep wrt ..plt
 

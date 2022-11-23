@@ -23,7 +23,7 @@ drawPaddle:
     mov [rbp - 2], dil ; save x
     mov [rbp - 3], sil ; save y
 
-_drawPaddleLoop:
+    _drawPaddleLoop:
 
     mov dil, [rbp - 2]
     mov sil, [rbp - 3]

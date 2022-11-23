@@ -27,7 +27,7 @@ drawText:
     ; pointer to msg
     mov [rbp - 10], rdx
 
-_drawTextLoop:
+    _drawTextLoop:
     mov dl, [rdx]
     cmp dl, 0
     je _drawTextEnd
@@ -43,81 +43,16 @@ _drawTextLoop:
     cmp dl, 'm'
     jne _drawTextAdditionalPaddingSkip
     add [rbp - 1], BYTE 1
-_drawTextAdditionalPaddingSkip:
+    _drawTextAdditionalPaddingSkip:
 
     inc QWORD [rbp - 10]
     mov rdx, [rbp - 10]
     jmp _drawTextLoop
 
-_drawTextEnd:
+    _drawTextEnd:
     mov rsp, rbp
     pop rbp
     ret
-
-; Draws digit at specified position
-; input char should be lowercase
-; Args:
-; dil - x
-; sil - y
-; dl  - value
-drawDigit:
-    push rbp
-    mov rbp, rsp
-    sub rsp, 16
-
-    mov [rbp - 1], BYTE dil ; x
-    mov [rbp - 2], BYTE sil ; y
-    mov [rbp - 3], BYTE dl ; value
-
-_drawDigit0:
-    cmp [rbp - 3], BYTE 0
-    jne _drawDigit1
-
-    jmp _drawDigitEnd
-
-_drawDigit1:
-    cmp [rbp - 3], BYTE 1
-    jne _drawDigit2
-
-    jmp _drawDigitEnd
-
-_drawDigit2:
-    cmp [rbp - 3], BYTE 2
-    jne _drawDigit3
-
-    jmp _drawDigitEnd
-
-_drawDigit3:
-    cmp [rbp - 3], BYTE 3
-    jne _drawDigit4
-
-    jmp _drawDigitEnd
-
-_drawDigit4:
-    cmp [rbp - 3], BYTE 4
-    jne _drawDigit5
-
-    jmp _drawDigitEnd
-
-_drawDigit5:
-    cmp [rbp - 3], BYTE 5
-    jne _drawDigit6
-
-    jmp _drawDigitEnd
-
-_drawDigit6:
-    cmp [rbp - 3], BYTE 6
-    jne _drawDigit7
-
-    jmp _drawDigitEnd
-
-_drawDigit7:
-    cmp [rbp - 3], BYTE 7
-    jne _drawDigitEnd
-
-_drawDigitEnd:
-    mov rsp, rbp
-    pop rbp
 
 ; Draws ascii character at specified position
 ; input char should be lowercase
@@ -130,7 +65,7 @@ drawChar:
     mov rbp, rsp
     mov cl, 4
 
-_drawCharP:
+    _drawCharP:
     cmp dl, 'p'
     jne _drawCharO
 
@@ -139,7 +74,7 @@ _drawCharP:
 
     jmp _drawCharEnd
 
-_drawCharO:
+    _drawCharO:
     cmp dl, 'o'
     jne _drawCharN
 
@@ -148,7 +83,7 @@ _drawCharO:
 
     jmp _drawCharEnd
 
-_drawCharN:
+    _drawCharN:
     cmp dl, 'n'
     jne _drawCharG
 
@@ -157,7 +92,7 @@ _drawCharN:
 
     jmp _drawCharEnd
 
-_drawCharG:
+    _drawCharG:
     cmp dl, 'g'
     jne _drawCharB
 
@@ -166,7 +101,7 @@ _drawCharG:
 
     jmp _drawCharEnd
 
-_drawCharB:
+    _drawCharB:
     cmp dl, 'b'
     jne _drawCharY
 
@@ -175,7 +110,7 @@ _drawCharB:
 
     jmp _drawCharEnd
 
-_drawCharY:
+    _drawCharY:
     cmp dl, 'y'
     jne _drawCharM
 
@@ -184,7 +119,7 @@ _drawCharY:
 
     jmp _drawCharEnd
 
-_drawCharM:
+    _drawCharM:
     cmp dl, 'm'
     jne _drawCharR
 
@@ -194,14 +129,14 @@ _drawCharM:
 
     jmp _drawCharEnd
 
-_drawCharR:
+    _drawCharR:
     cmp dl, 'r'
     jne _drawCharEnd
     
     lea rdx, [spriteLetterR]
     call drawSprite
 
-_drawCharEnd:
+    _drawCharEnd:
     mov rsp, rbp
     pop rbp
     ret

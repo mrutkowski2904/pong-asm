@@ -28,7 +28,7 @@ section .text
 setPixel:
     push rbp
     mov rbp, rsp
-    push rbx
+    push rax
     push r12
 
     cmp dil, BYTE (DIMENSION_X - 1)
@@ -55,9 +55,9 @@ setPixel:
 
     mov [rsi], dl
 
-_setPixelEnd:
+    _setPixelEnd:
     pop r12
-    pop rbx
+    pop rax
     mov rsp, rbp
     pop rbp
     ret
@@ -71,7 +71,7 @@ drawGameBoard:
     mov [rbp - 4], BYTE 0 ; y loop counter
     mov [rbp - 5], BYTE 0 ; x loop counter
 
-_gameBoardYLoop:
+    _gameBoardYLoop:
     ; draw line in the middle
     mov sil, [rbp - 4]
     and sil, 1
@@ -83,7 +83,7 @@ _gameBoardYLoop:
     mov dl, '|'
     call setPixel
 
-_gameBoardYLoopSkipMiddle:
+    _gameBoardYLoopSkipMiddle:
     ; draw left and right side border
     mov dil, (DIMENSION_X - 1)
     mov sil, [rbp - 4]
@@ -98,7 +98,7 @@ _gameBoardYLoopSkipMiddle:
     cmp BYTE [rbp - 4], BYTE DIMENSION_Y
     jl _gameBoardYLoop
 
-_gameBoardXLoop:
+    _gameBoardXLoop:
     ; draw upper and lower side border
     mov dil, [rbp - 5]
     mov sil, 0
@@ -127,7 +127,7 @@ drawBorder:
     mov [rbp - 4], BYTE 0 ; y loop counter
     mov [rbp - 5], BYTE 0 ; x loop counter
 
-_drawBorderYLoop:
+    _drawBorderYLoop:
     ; draw left and right side border
     mov dil, (DIMENSION_X - 1)
     mov sil, [rbp - 4]
@@ -142,7 +142,7 @@ _drawBorderYLoop:
     cmp BYTE [rbp - 4], BYTE DIMENSION_Y
     jl _drawBorderYLoop
 
-_drawBorderXLoop:
+    _drawBorderXLoop:
     ; draw upper and lower side border
     mov dil, [rbp - 5]
     mov sil, 0
@@ -175,7 +175,7 @@ drawBuffer:
     mov [rbp - 4], BYTE 0 ; x loop counter
     mov [rbp - 5], BYTE 0 ; y loop counter
 
-_drawBufferLoop:
+    _drawBufferLoop:
     ; calculate buffer index
     mov [rbp - 7], WORD 0
     xor rax, rax
@@ -197,7 +197,7 @@ _drawBufferLoop:
     cmp sil, ' '
     je _drawBufferPrintf
     lea rdi, [pixelFormat]
-_drawBufferPrintf:
+    _drawBufferPrintf:
     call printf wrt ..plt
 
     inc BYTE[rbp - 4]
@@ -228,7 +228,7 @@ clearBuffer:
 
     mov QWORD [rbp - 8], ((DIMENSION_X * DIMENSION_Y) - 1)
 
-_clearBufferLoop:
+    _clearBufferLoop:
     mov rax, [rbp - 8]
     dec QWORD [rbp - 8]
     lea rbx, [graphicsBuffer]
@@ -259,7 +259,7 @@ drawSprite:
     mov [rbp - 12], dil ; row start 
     mov [rbp - 13], cl ; character counter
 
-_drawSpriteLoop:
+    _drawSpriteLoop:
     mov dl, [rdx]
     cmp dl, 0
     je _drawSpriteEnd
@@ -284,13 +284,13 @@ _drawSpriteLoop:
     ; increment row
     inc BYTE [rbp - 2]
 
-_drawSpriteSkipRowInc:
+    _drawSpriteSkipRowInc:
 
     inc QWORD [rbp - 10]
     mov rdx, [rbp - 10]
     jmp _drawSpriteLoop
 
-_drawSpriteEnd:
+    _drawSpriteEnd:
     mov rsp, rbp
     pop rbp
     ret
