@@ -15,6 +15,7 @@ extern setPixel
 extern makeBeep
 extern drawText
 extern drawDigit
+extern drawSprite
 
 extern dimensionX
 extern dimensionY
@@ -66,6 +67,8 @@ _handleStartScreen:
     mov sil, 12
     lea rdx, [authorText]
     call drawText
+
+
 
     ; draw horizontal line under title
     mov [rbp - 3], BYTE 25

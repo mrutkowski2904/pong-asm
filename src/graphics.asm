@@ -5,7 +5,9 @@ global setPixel
 global drawGameBoard
 global drawBorder
 global drawBuffer
+global drawSprite
 global clearBuffer
+
 
 global dimensionX
 global dimensionY
@@ -236,6 +238,59 @@ _clearBufferLoop:
     jne _clearBufferLoop
 
     pop rbx
+    mov rsp, rbp
+    pop rbp
+    ret
+
+; Draws sprite (0 terminated) at specified position
+; dil  - x
+; sil  - y
+; rdx  - sprite addr
+; cl   - bytes per row 
+drawSprite:
+    push rbp
+    mov rbp, rsp
+    sub rsp, 16
+
+    mov [rbp - 1], dil  ; x arg / current x
+    mov [rbp - 2], sil  ; y arg / current y
+    mov [rbp - 10], rdx ; sprite pointer
+    mov [rbp - 11], cl  ; bytes per row
+    mov [rbp - 12], dil ; row start 
+    mov [rbp - 13], cl ; character counter
+
+_drawSpriteLoop:
+    mov dl, [rdx]
+    cmp dl, 0
+    je _drawSpriteEnd
+
+    mov dil, [rbp - 1]
+    mov sil, [rbp - 2]
+    call setPixel
+
+    inc BYTE [rbp - 1]
+    dec BYTE [rbp - 13]
+    cmp BYTE [rbp - 13], 0
+    jne _drawSpriteSkipRowInc
+
+    ; restore x position (row beginning)
+    mov dil, [rbp - 12]
+    mov [rbp - 1], dil
+
+    ; restore row counter
+    mov dil, [rbp - 11]
+    mov [rbp - 13], dil
+
+    ; increment row
+    inc BYTE [rbp - 2]
+
+_drawSpriteSkipRowInc:
+
+    inc QWORD [rbp - 10]
+    mov rdx, [rbp - 10]
+    jmp _drawSpriteLoop
+
+_drawSpriteEnd:
     mov rsp, rbp
     pop rbp
     ret

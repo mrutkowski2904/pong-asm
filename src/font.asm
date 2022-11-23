@@ -5,7 +5,7 @@ global drawText
 global drawChar
 global drawDigit
 
-extern setPixel 
+extern drawSprite
 
 section .text
 
@@ -72,93 +72,6 @@ drawDigit:
 _drawDigit0:
     cmp [rbp - 3], BYTE 0
     jne _drawDigit1
-    
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add sil, 1
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add sil, 2
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add sil, 4
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 1
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 2
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 4
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 4
-    add sil, 1
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 4
-    add sil, 2
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 4
-    add sil, 4
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 2
-    add sil, 4
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 1
-    add sil, 4
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 4
-    add sil, 3
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add sil, 3
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 3
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 3
-    add sil, 4
-    mov dl, '*'
-    call setPixel
 
     jmp _drawDigitEnd
 
@@ -166,193 +79,17 @@ _drawDigit1:
     cmp [rbp - 3], BYTE 1
     jne _drawDigit2
 
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 2
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 2
-    add sil, 1
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 2
-    add sil, 2
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 2
-    add sil, 3
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 2
-    add sil, 4
-    mov dl, '*'
-    call setPixel
-
     jmp _drawDigitEnd
 
 _drawDigit2:
     cmp [rbp - 3], BYTE 2
     jne _drawDigit3
 
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    mov dl, '*'
-    add dil, 1
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 2
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 3
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 4
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 4
-    add sil, 1
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 3
-    add sil, 1
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 3
-    add sil, 2
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 2
-    add sil, 2
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 2
-    add sil, 3
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 1
-    add sil, 3
-    mov dl, '*'
-    call setPixel
-    
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    mov dl, '*'
-    add sil, 4
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    mov dl, '*'
-    add dil, 1
-    add sil, 4
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 2
-    add sil, 4
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 3
-    add sil, 4
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 4
-    add sil, 4
-    mov dl, '*'
-    call setPixel
-
     jmp _drawDigitEnd
 
 _drawDigit3:
     cmp [rbp - 3], BYTE 3
     jne _drawDigit4
-
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    mov dl, '*'
-    add dil, 1
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 2
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 3
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 4
-    mov dl, '*'
-    call setPixel
-
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    mov dl, '*'
-    add sil, 5
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    mov dl, '*'
-    add dil, 1
-    add sil, 5
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 2
-    add sil, 5
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 3
-    add sil, 5
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 4
-    add sil, 5
-    mov dl, '*'
-    call setPixel
 
     jmp _drawDigitEnd
 
@@ -391,523 +128,121 @@ _drawDigitEnd:
 drawChar:
     push rbp
     mov rbp, rsp
-    sub rsp, 16
-
-    ; x param
-    mov [rbp - 1], dil
-    ; y param
-    mov [rbp - 2], sil
-    ; value param
-    mov [rbp - 3], dl
+    mov cl, 4
 
 _drawCharP:
-    cmp [rbp - 3], BYTE 'p'
+    cmp dl, 'p'
     jne _drawCharO
 
-    ; ####
-    ; #  #
-    ; ####
-    ; #
-    
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add sil, 1
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add sil, 2
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add sil, 3
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 1
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 2
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 3
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 3
-    add sil, 1
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 3
-    add sil, 2
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 2
-    add sil, 2
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 1
-    add sil, 2
-    mov dl, '*'
-    call setPixel
+    lea rdx, [spriteLetterP]
+    call drawSprite
 
     jmp _drawCharEnd
 
 _drawCharO:
-    cmp [rbp - 3], BYTE 'o'
+    cmp dl, 'o'
     jne _drawCharN
 
-    ; ####
-    ; #  #
-    ; #  #
-    ; ####
+    lea rdx, [spriteLetterO]
+    call drawSprite
 
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add sil, 1
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add sil, 2
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add sil, 3
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 1
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 2
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 3
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 3
-    add sil, 1
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 3
-    add sil, 2
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 3
-    add sil, 3
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 2
-    add sil, 3
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 1
-    add sil, 3
-    mov dl, '*'
-    call setPixel
     jmp _drawCharEnd
 
 _drawCharN:
-    cmp [rbp - 3], BYTE 'n'
+    cmp dl, 'n'
     jne _drawCharG
 
-    ; ###
-    ; #  #
-    ; #  #
-    ; #  #
-
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add sil, 1
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add sil, 2
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add sil, 3
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 1
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 2
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 3
-    add sil, 1
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 3
-    add sil, 2
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 3
-    add sil, 3
-    mov dl, '*'
-    call setPixel
+    lea rdx, [spriteLetterN]
+    call drawSprite
 
     jmp _drawCharEnd
 
 _drawCharG:
-    cmp [rbp - 3], BYTE 'g'
+    cmp dl, 'g'
     jne _drawCharB
 
-    ; ####
-    ; #  
-    ; #  #
-    ; ####
+    lea rdx, [spriteLetterG]
+    call drawSprite
 
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add sil, 1
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add sil, 2
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add sil, 3
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 1
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 2
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 3
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 3
-    add sil, 2
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 3
-    add sil, 3
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 2
-    add sil, 3
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 1
-    add sil, 3
-    mov dl, '*'
-    call setPixel
     jmp _drawCharEnd
 
 _drawCharB:
-    cmp [rbp - 3], BYTE 'b'
+    cmp dl, 'b'
     jne _drawCharY
 
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add sil, 1
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add sil, 2
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add sil, 3
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 1
-    add sil, 3
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 2
-    add sil, 2
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 1
-    add sil, 1
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 2
-    add sil, 1
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 2
-    add sil, 3
-    mov dl, '*'
-    call setPixel
+    lea rdx, [spriteLetterB]
+    call drawSprite
 
     jmp _drawCharEnd
 
 _drawCharY:
-    cmp [rbp - 3], BYTE 'y'
+    cmp dl, 'y'
     jne _drawCharM
-    
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 1
-    add sil, 1
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 1
-    add sil, 2
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 1
-    add sil, 3
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 2
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 2
-    add sil, 1
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    ; add dil, 0
-    add sil, 1
-    mov dl, '*'
-    call setPixel
+
+    lea rdx, [spriteLetterY]
+    call drawSprite
 
     jmp _drawCharEnd
 
 _drawCharM:
-    cmp [rbp - 3], BYTE 'm'
+    cmp dl, 'm'
     jne _drawCharR
 
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add sil, 1
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add sil, 2
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add sil, 3
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add sil, 1
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add sil, 2
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add sil, 3
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 4
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 4
-    add sil, 1
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 4
-    add sil, 2
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 4
-    add sil, 3
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 2
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 2
-    add sil, 1
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 1
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 3
-    mov dl, '*'
-    call setPixel
+    mov cl, 5
+    lea rdx, [spriteLetterM]
+    call drawSprite
 
     jmp _drawCharEnd
 
 _drawCharR:
-    cmp [rbp - 3], BYTE 'r'
+    cmp dl, 'r'
     jne _drawCharEnd
     
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add sil, 1
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add sil, 2
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add sil, 3
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 2
-    add sil, 3
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 2
-    add sil, 1
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 1
-    mov dl, '*'
-    call setPixel
-    mov dil, [rbp - 1]
-    mov sil, [rbp - 2]
-    add dil, 1
-    add sil, 2
-    mov dl, '*'
-    call setPixel
+    lea rdx, [spriteLetterR]
+    call drawSprite
 
 _drawCharEnd:
     mov rsp, rbp
     pop rbp
     ret
+
+section .data
+    spriteLetterP: db   '#', '#', '#', '#', \
+                        '#', ' ', ' ', '#', \
+                        '#', '#', '#', '#', \
+                        '#', ' ', ' ', ' ', 0
+
+    spriteLetterO: db   '#', '#', '#', '#', \
+                        '#', ' ', ' ', '#', \
+                        '#', ' ', ' ', '#', \
+                        '#', '#', '#', '#', 0
+
+    spriteLetterN: db   '#', '#', '#', ' ', \
+                        '#', ' ', ' ', '#', \
+                        '#', ' ', ' ', '#', \
+                        '#', ' ', ' ', '#', 0
+
+    spriteLetterG: db   '#', '#', '#', '#', \
+                        '#', ' ', ' ', ' ', \
+                        '#', ' ', ' ', '#', \
+                        '#', '#', '#', '#', 0
+
+    spriteLetterB: db   '#', ' ', ' ', ' ', \
+                        '#', '#', '#', '#', \
+                        '#', ' ', ' ', '#', \
+                        '#', '#', '#', '#', 0
+
+    spriteLetterY: db   '#', ' ', '#', ' ', \
+                        '#', '#', '#', ' ', \
+                        ' ', '#', ' ', ' ', \
+                        ' ', '#', ' ', ' ', 0
+
+    spriteLetterM: db   '#', '#', '#', '#', '#', \
+                        '#', ' ', '#', ' ', '#', \
+                        '#', ' ', ' ', ' ', '#', \
+                        '#', ' ', ' ', ' ', '#', 0
+
+    spriteLetterR: db   '#', '#', ' ', ' ', \
+                        '#', ' ', '#', ' ', \
+                        '#', '#', ' ', ' ', \
+                        '#', ' ', '#', ' ', 0
