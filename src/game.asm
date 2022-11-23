@@ -28,6 +28,7 @@ PLAYER_X equ 3
 COMPUTER_X equ 66
 
 section .text
+
 runGame:
     push rbp
     mov rbp, rsp
@@ -128,9 +129,22 @@ runGame:
     _drawPlayerLivesLoopEnd:
 
     ; draw computer lives
+    mov [rbp - 2], BYTE 0
+    mov al, 65
+    ; mov al, 30
     _drawComputerLivesLoop:
+    mov ah, [computerLives]
+    cmp BYTE [rbp - 2], ah
+    je _drawComputerLivesLoopEnd
 
+    sub al, 2
+    mov dil, al
+    mov sil, 2
+    mov dl, '#'
+    call setPixel
 
+    inc BYTE [rbp - 2]
+    jmp _drawComputerLivesLoop
     _drawComputerLivesLoopEnd:
 
     ; draw ball
@@ -151,7 +165,6 @@ runGame:
 ;=================================================
 ; END: GAMEPLAY LOGIC
 ;=================================================
-
 
     _gameLoopRepeat:
     ; draw new screen
@@ -211,6 +224,7 @@ handlePlayerInput:
     pop rbp
     ret
 
+
 handleBall:
     push rbp
     mov rbp, rsp
@@ -242,11 +256,11 @@ handleBall:
     neg BYTE [ballSpeedX]
 
     ; TODO: Player scores
-    ; inc BYTE [playerScore]
-    call resetBall
-    mov rdi, (350 * 1000)
-    call usleep wrt ..plt
-    neg BYTE [ballSpeedX]
+    ; dec BYTE [computerLives]
+    ; call resetBall
+    ; mov rdi, (350 * 1000)
+    ; call usleep wrt ..plt
+    ; neg BYTE [ballSpeedX]
 
 
     _handleBallXMinCheck:
@@ -293,6 +307,7 @@ handleBall:
     pop rbp
     ret
 
+
 resetBall:
     mov al, [dimensionY]
     shr al, 1
@@ -301,6 +316,7 @@ resetBall:
     shr al, 2
     mov [ballPosX], al
     ret
+
 
 section .data
     gameTitle: db 'pong', 0
