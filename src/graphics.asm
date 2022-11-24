@@ -296,7 +296,7 @@ drawSprite:
     ret
 
 section .data
-    pixelFormat : db `\033[107;97m%c\033[0m`, 0 ; white bg and fg
+    pixelFormat : db `\033[107;97m \033[0m`, 0 ; white bg and fg
     emptyPixelFormat: db ` `, 0
     newLineFormat: db 10, 0
     graphicsBuffer: TIMES (DIMENSION_X * DIMENSION_Y) db ' '
