@@ -2,8 +2,17 @@ bits 64
 default rel
 
 global drawPaddle
+global handlePlayerInput
+global moveComputerPaddle
 
 extern setPixel
+extern ballPosX
+extern ballPosY
+extern computerY
+extern dimensionY
+extern playerY
+extern rawPressedKey
+extern keyUpdated
 
 PADDLE_HEIGHT equ 4
 
@@ -37,6 +46,89 @@ drawPaddle:
     jne _drawPaddleLoop
 
     pop rbx
+    mov rsp, rbp
+    pop rbp
+    ret
+
+handlePlayerInput:
+    push rbp
+    mov rbp, rsp
+    push rbx
+    push r12
+
+    cmp [keyUpdated], BYTE 1
+    jne _handlePlayerInputEnd
+
+    mov [keyUpdated], BYTE 0
+
+    cmp [rawPressedKey], BYTE 'w'
+    je _handleUpKey
+
+    cmp [rawPressedKey], BYTE 's'
+    je _handleDownKey
+
+    jmp _handlePlayerInputEnd
+
+    _handleUpKey:
+    cmp [playerY], BYTE 1
+    je _handlePlayerInputEnd
+
+    dec BYTE [playerY]
+    jmp _handlePlayerInputEnd
+
+    _handleDownKey:
+    mov bl, [dimensionY]
+    sub bl, 5
+    cmp [playerY], bl 
+    je _handlePlayerInputEnd
+
+    inc BYTE [playerY]
+    jmp _handlePlayerInputEnd
+
+    _handlePlayerInputEnd:
+    pop r12
+    pop rbx
+    mov rsp, rbp
+    pop rbp
+    ret
+
+computerPaddleUp:
+    mov dil, [computerY]
+    cmp dil, 1
+    je _computerPaddleUpEnd
+    dec BYTE [computerY]
+    _computerPaddleUpEnd:
+    ret
+
+computerPaddleDown:
+    mov sil, [dimensionY]
+    dec sil
+    mov dil, [computerY]
+    add dil, PADDLE_HEIGHT
+    cmp dil, sil
+    je _computerPaddleDownEnd
+    inc BYTE [computerY]
+    _computerPaddleDownEnd:
+    ret
+
+moveComputerPaddle:
+    push rbp
+    mov rbp, rsp
+
+    mov al, [computerY]
+    add al, (PADDLE_HEIGHT / 2)
+    cmp al, [ballPosY]
+    je _moveComputerPaddleEnd
+
+    cmp al, [ballPosY]
+    jl _moveComputerPaddleUp
+    call computerPaddleDown
+    jmp _moveComputerPaddleEnd
+
+    _moveComputerPaddleUp:
+    call computerPaddleUp
+
+    _moveComputerPaddleEnd:
     mov rsp, rbp
     pop rbp
     ret

@@ -9,18 +9,25 @@ extern drawBorder
 extern drawGameBoard
 extern clearBuffer
 extern drawPaddle
+extern setPixel
 extern rawPressedKey
 extern keyUpdated
-extern setPixel
 extern makeBeep
 extern drawText
 extern drawDigit
 extern drawSprite
+extern handlePlayerInput
+extern moveComputerPaddle
 
 extern dimensionX
 extern dimensionY
 
 extern usleep
+
+global computerY
+global playerY
+global ballPosX
+global ballPosY
 
 START_SCREEN equ 0
 GAME_SCREEN equ 1
@@ -161,6 +168,8 @@ runGame:
     mov sil, [computerY]
     call drawPaddle
 
+    call moveComputerPaddle
+
     jmp _gameLoopRepeat
 ;=================================================
 ; END: GAMEPLAY LOGIC
@@ -177,49 +186,6 @@ runGame:
     call clearBuffer
     jmp _gameLoop
 
-    mov rsp, rbp
-    pop rbp
-    ret
-
-
-handlePlayerInput:
-    push rbp
-    mov rbp, rsp
-    push rbx
-    push r12
-
-    cmp [keyUpdated], BYTE 1
-    jne _handlePlayerInputEnd
-
-    mov [keyUpdated], BYTE 0
-
-    cmp [rawPressedKey], BYTE 'w'
-    je _handleUpKey
-
-    cmp [rawPressedKey], BYTE 's'
-    je _handleDownKey
-
-    jmp _handlePlayerInputEnd
-
-    _handleUpKey:
-    cmp [playerY], BYTE 1
-    je _handlePlayerInputEnd
-
-    dec BYTE [playerY]
-    jmp _handlePlayerInputEnd
-
-    _handleDownKey:
-    mov bl, [dimensionY]
-    sub bl, 5
-    cmp [playerY], bl 
-    je _handlePlayerInputEnd
-
-    inc BYTE [playerY]
-    jmp _handlePlayerInputEnd
-
-    _handlePlayerInputEnd:
-    pop r12
-    pop rbx
     mov rsp, rbp
     pop rbp
     ret
@@ -279,9 +245,25 @@ handleBall:
 
     _handleBallCheckPlayerPaddle:
     cmp [ballPosX], BYTE (PLAYER_X + 1)
-    jne _handleBallChecksEnd
+    jne _handleBallCheckComputerPaddle
 
     mov al, [playerY]
+    cmp [ballPosY], al
+    jl _handleBallCheckComputerPaddle
+
+    add al, 4
+    cmp [ballPosY], al
+    jg _handleBallCheckComputerPaddle
+
+    ; bounce
+    neg BYTE [ballSpeedX]
+    ; neg BYTE [ballSpeedY]
+
+    _handleBallCheckComputerPaddle:
+    cmp [ballPosX], BYTE (COMPUTER_X - 1)
+    jne _handleBallChecksEnd
+
+    mov al, [computerY]
     cmp [ballPosY], al
     jl _handleBallChecksEnd
 
@@ -291,7 +273,6 @@ handleBall:
 
     ; bounce
     neg BYTE [ballSpeedX]
-    ; neg BYTE [ballSpeedY]
 
     _handleBallChecksEnd:
     ; update ball position
