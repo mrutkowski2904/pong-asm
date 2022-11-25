@@ -71,26 +71,25 @@ runGame:
 
     mov dil, [dimensionX]
     shr dil, 1
-    sub dil, 8
+    sub dil, 9
     mov r12b, dil
-    ; mov dil, 25
     mov sil, 5
     lea rdx, [gameTitle]
     call drawText
 
     mov dil, r12b
     sub dil, 2
-    ; mov dil, 23
     mov sil, 12
     lea rdx, [authorText]
     call drawText
 
     ; draw horizontal line under title
+    sub r12b, 4
     mov [rbp - 3], BYTE 25
     _handleStartScreenUnderlineLoop:
 
     mov al, [rbp - 3]
-    mov dil, 20
+    mov dil, r12b
     add dil, al
     mov sil, 10
     mov dl, '*'
@@ -145,8 +144,6 @@ runGame:
     mov [rbp - 2], BYTE 0
     mov al, [dimensionX]
     sub al, 4
-    ; mov al, 56
-    ; mov al, 30
     _drawComputerLivesLoop:
     mov ah, [computerLives]
     cmp BYTE [rbp - 2], ah
@@ -241,7 +238,6 @@ handleBall:
     jne _handleBallCheckPlayerPaddle
     neg BYTE [ballSpeedX]
 
-    ; TODO: Computer scores
     dec BYTE [playerLives]
     call resetBall
     mov rdi, (350 * 1000)
@@ -263,7 +259,6 @@ handleBall:
 
     ; bounce
     neg BYTE [ballSpeedX]
-    ; neg BYTE [ballSpeedY]
 
     _handleBallCheckComputerPaddle:
     cmp [ballPosX], BYTE (COMPUTER_X - 1)
@@ -279,7 +274,6 @@ handleBall:
 
     ; bounce
     neg BYTE [ballSpeedX]
-    ; neg BYTE [ballSpeedY]
 
     _handleBallChecksEnd:
     ; update ball position
@@ -368,5 +362,5 @@ section .data
     ballSpeedX: db 1
     ballSpeedY: db 1
 
-    playerLives: db 1
+    playerLives: db 3
     computerLives: db 3
