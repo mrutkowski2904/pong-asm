@@ -131,9 +131,64 @@ drawChar:
 
     _drawCharR:
     cmp dl, 'r'
-    jne _drawCharEnd
+    jne _drawCharU
     
     lea rdx, [spriteLetterR]
+    call drawSprite
+
+    jmp _drawCharEnd
+
+    _drawCharU:
+    cmp dl, 'u'
+    jne _drawCharL
+
+    lea rdx, [spriteLetterU]
+    call drawSprite
+
+    jmp _drawCharEnd
+
+    _drawCharL:
+    cmp dl, 'l'
+    jne _drawCharS
+
+    lea rdx, [spriteLetterL]
+    call drawSprite
+
+    jmp _drawCharEnd
+
+    _drawCharS:
+    cmp dl, 's'
+    jne _drawCharW
+
+    lea rdx, [spriteLetterS]
+    call drawSprite
+
+    jmp _drawCharEnd
+
+    _drawCharW:
+    cmp dl, 'w'
+    jne _drawCharI
+
+    mov cl, 5
+    lea rdx, [spriteLetterW]
+    call drawSprite
+
+    jmp _drawCharEnd
+
+    _drawCharI:
+    cmp dl, 'i'
+    jne _drawCharE
+
+    lea rdx, [spriteLetterI]
+    call drawSprite
+
+    jmp _drawCharEnd
+
+    _drawCharE:
+    cmp dl, 'e'
+    jne _drawCharEnd
+
+    lea rdx, [spriteLetterE]
     call drawSprite
 
     _drawCharEnd:
@@ -181,3 +236,33 @@ section .data
                         '#', ' ', '#', ' ', \
                         '#', '#', ' ', ' ', \
                         '#', ' ', '#', ' ', 0
+
+    spriteLetterU: db   '#', ' ', ' ', '#', \
+                        '#', ' ', ' ', '#', \
+                        '#', ' ', ' ', '#', \
+                        '#', '#', '#', '#', 0
+
+    spriteLetterL: db   '#', ' ', ' ', ' ', \
+                        '#', ' ', ' ', ' ', \
+                        '#', ' ', ' ', ' ', \
+                        '#', '#', '#', '#', 0
+
+    spriteLetterS: db   '#', '#', ' ', ' ', \
+                        '#', ' ', ' ', ' ', \
+                        ' ', '#', ' ', ' ', \
+                        '#', '#', ' ', ' ', 0
+
+    spriteLetterE: db   '#', '#', '#', '#', \
+                        '#', ' ', '#', '#', \
+                        '#', ' ', ' ', ' ', \
+                        '#', '#', '#', '#', 0
+
+    spriteLetterW: db   '#', ' ', ' ', ' ', '#', \
+                        '#', ' ', '#', ' ', '#', \
+                        '#', ' ', '#', ' ', '#', \
+                        '#', '#', '#', '#', '#', 0
+
+    spriteLetterI: db   ' ', ' ', '#', ' ', \
+                        ' ', ' ', '#', ' ', \
+                        ' ', ' ', '#', ' ', \
+                        ' ', ' ', '#', ' ', 0

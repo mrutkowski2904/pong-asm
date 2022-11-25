@@ -115,18 +115,31 @@ moveComputerPaddle:
     push rbp
     mov rbp, rsp
 
+    xor dil, dil
+    ; if ballY => computerY && ballY <= (computerY + PADDLE_HEIGHT)
     mov al, [computerY]
-    add al, (PADDLE_HEIGHT / 2)
-    cmp al, [ballPosY]
-    je _moveComputerPaddleEnd
-
-    cmp al, [ballPosY]
-    jl _moveComputerPaddleUp
-    call computerPaddleDown
+    cmp  [ballPosY], al
+    jl _moveComputerPaddleMoveRequired
+    inc dil
+    add al, PADDLE_HEIGHT
+    cmp [ballPosY], al
+    jg _moveComputerPaddleMoveRequired
+    
+    ; no action needed
     jmp _moveComputerPaddleEnd
 
-    _moveComputerPaddleUp:
+    _moveComputerPaddleMoveRequired:
+    mov al, [computerY]
+    ; dil == 0 -> ballY < computerY
+    ; dil == 1 -> ballY > (computerY + PADDLE_HEIGHT)
+    cmp dil, 0
+    jne _moveComputerPaddleMoveB
+    _moveComputerPaddleMoveA:
     call computerPaddleUp
+    jmp _moveComputerPaddleEnd
+
+    _moveComputerPaddleMoveB:
+    call computerPaddleDown
 
     _moveComputerPaddleEnd:
     mov rsp, rbp

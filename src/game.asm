@@ -32,7 +32,7 @@ global ballPosY
 START_SCREEN equ 0
 GAME_SCREEN equ 1
 PLAYER_X equ 3
-COMPUTER_X equ 66
+COMPUTER_X equ 61
 
 section .text
 
@@ -69,12 +69,18 @@ runGame:
     _handleStartScreen:
     call drawBorder
 
-    mov dil, 25
+    mov dil, [dimensionX]
+    shr dil, 1
+    sub dil, 8
+    mov r12b, dil
+    ; mov dil, 25
     mov sil, 5
     lea rdx, [gameTitle]
     call drawText
 
-    mov dil, 23
+    mov dil, r12b
+    sub dil, 2
+    ; mov dil, 23
     mov sil, 12
     lea rdx, [authorText]
     call drawText
@@ -84,7 +90,7 @@ runGame:
     _handleStartScreenUnderlineLoop:
 
     mov al, [rbp - 3]
-    mov dil, 21
+    mov dil, 20
     add dil, al
     mov sil, 10
     mov dl, '*'
@@ -137,7 +143,9 @@ runGame:
 
     ; draw computer lives
     mov [rbp - 2], BYTE 0
-    mov al, 65
+    mov al, [dimensionX]
+    sub al, 4
+    ; mov al, 56
     ; mov al, 30
     _drawComputerLivesLoop:
     mov ah, [computerLives]
@@ -190,7 +198,6 @@ runGame:
     pop rbp
     ret
 
-
 handleBall:
     push rbp
     mov rbp, rsp
@@ -222,12 +229,12 @@ handleBall:
     neg BYTE [ballSpeedX]
 
     ; TODO: Player scores
-    ; dec BYTE [computerLives]
-    ; call resetBall
-    ; mov rdi, (350 * 1000)
-    ; call usleep wrt ..plt
-    ; neg BYTE [ballSpeedX]
-
+    dec BYTE [computerLives]
+    call resetBall
+    mov rdi, (350 * 1000)
+    call usleep wrt ..plt
+    neg BYTE [ballSpeedX]
+    call checkPoints
 
     _handleBallXMinCheck:
     cmp [ballPosX], BYTE 1
@@ -239,9 +246,8 @@ handleBall:
     call resetBall
     mov rdi, (350 * 1000)
     call usleep wrt ..plt
-
-    ; call exitGame
     call makeBeep
+    call checkPoints
 
     _handleBallCheckPlayerPaddle:
     cmp [ballPosX], BYTE (PLAYER_X + 1)
@@ -273,6 +279,7 @@ handleBall:
 
     ; bounce
     neg BYTE [ballSpeedX]
+    ; neg BYTE [ballSpeedY]
 
     _handleBallChecksEnd:
     ; update ball position
@@ -288,7 +295,6 @@ handleBall:
     pop rbp
     ret
 
-
 resetBall:
     mov al, [dimensionY]
     shr al, 1
@@ -298,10 +304,61 @@ resetBall:
     mov [ballPosX], al
     ret
 
+checkPoints:
+    push rbp
+    mov rbp, rsp
+    push rbx
+    push r12
+
+    cmp [playerLives], BYTE 0
+    je _checkPointsPlayerLoses
+
+    cmp [computerLives], BYTE 0
+    je _checkPointsPlayerWins
+
+    jmp _checkPointsEnd
+    _checkPointsPlayerLoses:
+    call clearBuffer
+    lea rdx, [playerLosesText]
+    mov dil, [dimensionX]
+    shr dil, 1
+    sub dil, 20
+    jmp _checkPointsQuitGame
+
+    _checkPointsPlayerWins:
+    call clearBuffer
+    lea rdx, [playerWinsText]
+    mov dil, [dimensionX]
+    shr dil, 1
+    sub dil, 18
+    jmp _checkPointsQuitGame
+
+    _checkPointsQuitGame:
+    mov sil, [dimensionY]
+    sub sil, 4
+    shr sil, 1
+    call drawText
+
+    call drawBorder
+    call drawBuffer
+    call makeBeep
+
+    mov rdi, (500 * 1000)
+    call usleep wrt ..plt
+    call exitGame
+
+    _checkPointsEnd:
+    pop r12
+    pop rbx
+    mov rsp, rbp
+    pop rbp
+    ret
 
 section .data
     gameTitle: db 'pong', 0
     authorText: db 'by mr', 0
+    playerWinsText: db 'you win', 0
+    playerLosesText: db 'you lose', 0
 
     playerY: db 1
     computerY: db 1
@@ -311,5 +368,5 @@ section .data
     ballSpeedX: db 1
     ballSpeedY: db 1
 
-    playerLives: db 3
+    playerLives: db 1
     computerLives: db 3

@@ -15,8 +15,8 @@ global dimensionY
 extern system
 extern printf
 
-DIMENSION_X equ 70
-DIMENSION_Y equ 23
+DIMENSION_X equ 65
+DIMENSION_Y equ 20
 
 section .text
 
