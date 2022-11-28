@@ -52,21 +52,21 @@ runGame:
     mov [playerY], al
     mov [computerY], al
 
-    _gameLoop:
+    .gameLoop:
     ; detect state
     ; title screen
     cmp [rbp - 4], BYTE START_SCREEN
-    je _handleStartScreen
+    je .startScreen
 
     ; game
     cmp [rbp - 4], BYTE GAME_SCREEN
-    je _handleGameplay
+    je .gameplay
 
 
 ;=================================================
 ; START: TITLE SCREEN LOGIC
 ;=================================================
-    _handleStartScreen:
+    .startScreen:
     call drawBorder
 
     mov dil, [dimensionX]
@@ -86,7 +86,7 @@ runGame:
     ; draw horizontal line under title
     sub r12b, 4
     mov [rbp - 3], BYTE 25
-    _handleStartScreenUnderlineLoop:
+    .startScreenUnderlineLoop:
 
     mov al, [rbp - 3]
     mov dil, r12b
@@ -97,18 +97,18 @@ runGame:
 
     dec BYTE [rbp - 3]
     cmp BYTE [rbp - 3], 0
-    jne _handleStartScreenUnderlineLoop
+    jne .startScreenUnderlineLoop
 
 
     ; handle key press on start screen
     cmp [keyUpdated], BYTE 1
-    jne _startScreenSkipKey
+    jne .startScreenSkipKey
 
     mov [keyUpdated], BYTE 0
     mov [rbp - 4], BYTE GAME_SCREEN
 
-    _startScreenSkipKey:
-    jmp _gameLoopRepeat
+    .startScreenSkipKey:
+    jmp .gameLoopRepeat
 ;=================================================
 ; END: TITLE SCREEN LOGIC
 ;=================================================
@@ -117,7 +117,7 @@ runGame:
 ;=================================================
 ; START: GAMEPLAY LOGIC
 ;=================================================
-    _handleGameplay:
+    .gameplay:
     call drawGameBoard
     call handlePlayerInput
     call handleBall
@@ -125,10 +125,10 @@ runGame:
     ; draw player lives
     mov [rbp - 2], BYTE 0
     mov al, 3
-    _drawPlayerLivesLoop:
+    .playerLivesLoop:
     mov ah, [playerLives]
     cmp BYTE [rbp - 2], ah
-    je _drawPlayerLivesLoopEnd
+    je .playerLivesLoopEnd
 
     add al, 2
     mov dil, al
@@ -137,17 +137,17 @@ runGame:
     call setPixel
 
     inc BYTE [rbp - 2]
-    jmp _drawPlayerLivesLoop
-    _drawPlayerLivesLoopEnd:
+    jmp .playerLivesLoop
+    .playerLivesLoopEnd:
 
     ; draw computer lives
     mov [rbp - 2], BYTE 0
     mov al, [dimensionX]
     sub al, 4
-    _drawComputerLivesLoop:
+    .computerLivesLoop:
     mov ah, [computerLives]
     cmp BYTE [rbp - 2], ah
-    je _drawComputerLivesLoopEnd
+    je .computerLivesLoopEnd
 
     sub al, 2
     mov dil, al
@@ -156,8 +156,8 @@ runGame:
     call setPixel
 
     inc BYTE [rbp - 2]
-    jmp _drawComputerLivesLoop
-    _drawComputerLivesLoopEnd:
+    jmp .computerLivesLoop
+    .computerLivesLoopEnd:
 
     ; draw ball
     mov dil, [ballPosX]
@@ -175,12 +175,12 @@ runGame:
 
     call moveComputerPaddle
 
-    jmp _gameLoopRepeat
+    jmp .gameLoopRepeat
 ;=================================================
 ; END: GAMEPLAY LOGIC
 ;=================================================
 
-    _gameLoopRepeat:
+    .gameLoopRepeat:
     ; draw new screen
     call drawBuffer
 
@@ -189,7 +189,7 @@ runGame:
     call usleep wrt ..plt
 
     call clearBuffer
-    jmp _gameLoop
+    jmp .gameLoop
 
     mov rsp, rbp
     pop rbp
@@ -202,27 +202,27 @@ handleBall:
     push r12
 
     ; handle collision
-    _handleBallYMaxCheck:
+    .ballYMaxCheck:
     mov al, [dimensionY]
     dec al
     dec al
 
     cmp [ballPosY], al
-    jne _handleBallYMinCheck
+    jne .ballYMinCheck
     neg BYTE [ballSpeedY]
 
-    _handleBallYMinCheck:
+    .ballYMinCheck:
     cmp [ballPosY], BYTE 1
-    jne _handleBallXMaxCheck
+    jne .ballXMaxCheck
     neg BYTE [ballSpeedY]
 
-    _handleBallXMaxCheck:
+    .ballXMaxCheck:
     mov al, [dimensionX]
     dec al
     dec al
 
     cmp [ballPosX], al
-    jne _handleBallXMinCheck
+    jne .ballXMinCheck
     neg BYTE [ballSpeedX]
 
     ; TODO: Player scores
@@ -233,9 +233,9 @@ handleBall:
     neg BYTE [ballSpeedX]
     call checkPoints
 
-    _handleBallXMinCheck:
+    .ballXMinCheck:
     cmp [ballPosX], BYTE 1
-    jne _handleBallCheckPlayerPaddle
+    jne .ballCheckPlayerPaddle
     neg BYTE [ballSpeedX]
 
     dec BYTE [playerLives]
@@ -245,37 +245,37 @@ handleBall:
     call makeBeep
     call checkPoints
 
-    _handleBallCheckPlayerPaddle:
+    .ballCheckPlayerPaddle:
     cmp [ballPosX], BYTE (PLAYER_X + 1)
-    jne _handleBallCheckComputerPaddle
+    jne .ballCheckComputerPaddle
 
     mov al, [playerY]
     cmp [ballPosY], al
-    jl _handleBallCheckComputerPaddle
+    jl .ballCheckComputerPaddle
 
     add al, 4
     cmp [ballPosY], al
-    jg _handleBallCheckComputerPaddle
+    jg .ballCheckComputerPaddle
 
     ; bounce
     neg BYTE [ballSpeedX]
 
-    _handleBallCheckComputerPaddle:
+    .ballCheckComputerPaddle:
     cmp [ballPosX], BYTE (COMPUTER_X - 1)
-    jne _handleBallChecksEnd
+    jne .ballChecksEnd
 
     mov al, [computerY]
     cmp [ballPosY], al
-    jl _handleBallChecksEnd
+    jl .ballChecksEnd
 
     add al, 4
     cmp [ballPosY], al
-    jg _handleBallChecksEnd
+    jg .ballChecksEnd
 
     ; bounce
     neg BYTE [ballSpeedX]
 
-    _handleBallChecksEnd:
+    .ballChecksEnd:
     ; update ball position
     mov al, [ballSpeedX]
     add [ballPosX], al
@@ -305,29 +305,29 @@ checkPoints:
     push r12
 
     cmp [playerLives], BYTE 0
-    je _checkPointsPlayerLoses
+    je .checkPlayerLoses
 
     cmp [computerLives], BYTE 0
-    je _checkPointsPlayerWins
+    je .checkPlayerWins
 
-    jmp _checkPointsEnd
-    _checkPointsPlayerLoses:
+    jmp .pointCheckEnd
+    .checkPlayerLoses:
     call clearBuffer
     lea rdx, [playerLosesText]
     mov dil, [dimensionX]
     shr dil, 1
     sub dil, 20
-    jmp _checkPointsQuitGame
+    jmp .pointCheckQuitGame
 
-    _checkPointsPlayerWins:
+    .checkPlayerWins:
     call clearBuffer
     lea rdx, [playerWinsText]
     mov dil, [dimensionX]
     shr dil, 1
     sub dil, 18
-    jmp _checkPointsQuitGame
+    jmp .pointCheckQuitGame
 
-    _checkPointsQuitGame:
+    .pointCheckQuitGame:
     mov sil, [dimensionY]
     sub sil, 4
     shr sil, 1
@@ -341,7 +341,7 @@ checkPoints:
     call usleep wrt ..plt
     call exitGame
 
-    _checkPointsEnd:
+    .pointCheckEnd:
     pop r12
     pop rbx
     mov rsp, rbp

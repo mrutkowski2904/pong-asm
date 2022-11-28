@@ -28,7 +28,7 @@ keyboardLoop:
     push rbp
     mov rbp, rsp
 
-    _keyboardLoop:
+    .loop:
     mov rdi, 1000
     call usleep wrt ..plt
 
@@ -36,7 +36,7 @@ keyboardLoop:
     mov [rawPressedKey], rax
     mov [keyUpdated], BYTE 1
 
-    jmp _keyboardLoop
+    jmp .loop
 
     mov rsp, rbp
     pop rbp

@@ -32,7 +32,7 @@ drawPaddle:
     mov [rbp - 2], dil ; save x
     mov [rbp - 3], sil ; save y
 
-    _drawPaddleLoop:
+    .loop:
 
     mov dil, [rbp - 2]
     mov sil, [rbp - 3]
@@ -43,7 +43,7 @@ drawPaddle:
 
     dec BYTE [rbp - 1]
     cmp BYTE [rbp - 1], 0
-    jne _drawPaddleLoop
+    jne .loop
 
     pop rbx
     mov rsp, rbp
@@ -57,35 +57,35 @@ handlePlayerInput:
     push r12
 
     cmp [keyUpdated], BYTE 1
-    jne _handlePlayerInputEnd
+    jne .end
 
     mov [keyUpdated], BYTE 0
 
     cmp [rawPressedKey], BYTE 'w'
-    je _handleUpKey
+    je .upKey
 
     cmp [rawPressedKey], BYTE 's'
-    je _handleDownKey
+    je .downKey
 
-    jmp _handlePlayerInputEnd
+    jmp .end
 
-    _handleUpKey:
+    .upKey:
     cmp [playerY], BYTE 1
-    je _handlePlayerInputEnd
+    je .end
 
     dec BYTE [playerY]
-    jmp _handlePlayerInputEnd
+    jmp .end
 
-    _handleDownKey:
+    .downKey:
     mov bl, [dimensionY]
     sub bl, 5
     cmp [playerY], bl 
-    je _handlePlayerInputEnd
+    je .end
 
     inc BYTE [playerY]
-    jmp _handlePlayerInputEnd
+    jmp .end
 
-    _handlePlayerInputEnd:
+    .end:
     pop r12
     pop rbx
     mov rsp, rbp
@@ -95,9 +95,9 @@ handlePlayerInput:
 computerPaddleUp:
     mov dil, [computerY]
     cmp dil, 1
-    je _computerPaddleUpEnd
+    je .end
     dec BYTE [computerY]
-    _computerPaddleUpEnd:
+    .end:
     ret
 
 computerPaddleDown:
@@ -106,9 +106,9 @@ computerPaddleDown:
     mov dil, [computerY]
     add dil, PADDLE_HEIGHT
     cmp dil, sil
-    je _computerPaddleDownEnd
+    je .end
     inc BYTE [computerY]
-    _computerPaddleDownEnd:
+    .end:
     ret
 
 moveComputerPaddle:
@@ -119,29 +119,29 @@ moveComputerPaddle:
     ; if ballY => computerY && ballY <= (computerY + PADDLE_HEIGHT)
     mov al, [computerY]
     cmp  [ballPosY], al
-    jl _moveComputerPaddleMoveRequired
+    jl .moveRequired
     inc dil
     add al, PADDLE_HEIGHT
     cmp [ballPosY], al
-    jg _moveComputerPaddleMoveRequired
+    jg .moveRequired
     
     ; no action needed
-    jmp _moveComputerPaddleEnd
+    jmp .end
 
-    _moveComputerPaddleMoveRequired:
+    .moveRequired:
     mov al, [computerY]
     ; dil == 0 -> ballY < computerY
     ; dil == 1 -> ballY > (computerY + PADDLE_HEIGHT)
     cmp dil, 0
-    jne _moveComputerPaddleMoveB
-    _moveComputerPaddleMoveA:
+    jne .moveDown
+    .moveUp:
     call computerPaddleUp
-    jmp _moveComputerPaddleEnd
+    jmp .end
 
-    _moveComputerPaddleMoveB:
+    .moveDown:
     call computerPaddleDown
 
-    _moveComputerPaddleEnd:
+    .end:
     mov rsp, rbp
     pop rbp
     ret

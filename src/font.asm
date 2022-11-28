@@ -27,10 +27,10 @@ drawText:
     ; pointer to msg
     mov [rbp - 10], rdx
 
-    _drawTextLoop:
+    .textLoop:
     mov dl, [rdx]
     cmp dl, 0
-    je _drawTextEnd
+    je .end
 
     mov dil, [rbp - 1]
     mov sil, [rbp - 2]
@@ -41,15 +41,15 @@ drawText:
     mov rdx, [rbp - 10]
     mov dl, [rdx]
     cmp dl, 'm'
-    jne _drawTextAdditionalPaddingSkip
+    jne .extraPaddingSkip
     add [rbp - 1], BYTE 1
-    _drawTextAdditionalPaddingSkip:
+    .extraPaddingSkip:
 
     inc QWORD [rbp - 10]
     mov rdx, [rbp - 10]
-    jmp _drawTextLoop
+    jmp .textLoop
 
-    _drawTextEnd:
+    .end:
     mov rsp, rbp
     pop rbp
     ret
@@ -65,133 +65,133 @@ drawChar:
     mov rbp, rsp
     mov cl, 4
 
-    _drawCharP:
+    .drawP:
     cmp dl, 'p'
-    jne _drawCharO
+    jne .drawO
 
     lea rdx, [spriteLetterP]
     call drawSprite
 
-    jmp _drawCharEnd
+    jmp .end
 
-    _drawCharO:
+    .drawO:
     cmp dl, 'o'
-    jne _drawCharN
+    jne .drawN
 
     lea rdx, [spriteLetterO]
     call drawSprite
 
-    jmp _drawCharEnd
+    jmp .end
 
-    _drawCharN:
+    .drawN:
     cmp dl, 'n'
-    jne _drawCharG
+    jne .drawG
 
     lea rdx, [spriteLetterN]
     call drawSprite
 
-    jmp _drawCharEnd
+    jmp .end
 
-    _drawCharG:
+    .drawG:
     cmp dl, 'g'
-    jne _drawCharB
+    jne .drawB
 
     lea rdx, [spriteLetterG]
     call drawSprite
 
-    jmp _drawCharEnd
+    jmp .end
 
-    _drawCharB:
+    .drawB:
     cmp dl, 'b'
-    jne _drawCharY
+    jne .drawY
 
     lea rdx, [spriteLetterB]
     call drawSprite
 
-    jmp _drawCharEnd
+    jmp .end
 
-    _drawCharY:
+    .drawY:
     cmp dl, 'y'
-    jne _drawCharM
+    jne .drawM
 
     lea rdx, [spriteLetterY]
     call drawSprite
 
-    jmp _drawCharEnd
+    jmp .end
 
-    _drawCharM:
+    .drawM:
     cmp dl, 'm'
-    jne _drawCharR
+    jne .drawR
 
     mov cl, 5
     lea rdx, [spriteLetterM]
     call drawSprite
 
-    jmp _drawCharEnd
+    jmp .end
 
-    _drawCharR:
+    .drawR:
     cmp dl, 'r'
-    jne _drawCharU
+    jne .drawU
     
     lea rdx, [spriteLetterR]
     call drawSprite
 
-    jmp _drawCharEnd
+    jmp .end
 
-    _drawCharU:
+    .drawU:
     cmp dl, 'u'
-    jne _drawCharL
+    jne .drawL
 
     lea rdx, [spriteLetterU]
     call drawSprite
 
-    jmp _drawCharEnd
+    jmp .end
 
-    _drawCharL:
+    .drawL:
     cmp dl, 'l'
-    jne _drawCharS
+    jne .drawS
 
     lea rdx, [spriteLetterL]
     call drawSprite
 
-    jmp _drawCharEnd
+    jmp .end
 
-    _drawCharS:
+    .drawS:
     cmp dl, 's'
-    jne _drawCharW
+    jne .drawW
 
     lea rdx, [spriteLetterS]
     call drawSprite
 
-    jmp _drawCharEnd
+    jmp .end
 
-    _drawCharW:
+    .drawW:
     cmp dl, 'w'
-    jne _drawCharI
+    jne .drawI
 
     mov cl, 5
     lea rdx, [spriteLetterW]
     call drawSprite
 
-    jmp _drawCharEnd
+    jmp .end
 
-    _drawCharI:
+    .drawI:
     cmp dl, 'i'
-    jne _drawCharE
+    jne .drawE
 
     lea rdx, [spriteLetterI]
     call drawSprite
 
-    jmp _drawCharEnd
+    jmp .end
 
-    _drawCharE:
+    .drawE:
     cmp dl, 'e'
-    jne _drawCharEnd
+    jne .end
 
     lea rdx, [spriteLetterE]
     call drawSprite
 
-    _drawCharEnd:
+    .end:
     mov rsp, rbp
     pop rbp
     ret

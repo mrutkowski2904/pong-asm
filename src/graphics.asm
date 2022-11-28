@@ -32,14 +32,14 @@ setPixel:
     push r12
 
     cmp dil, BYTE (DIMENSION_X - 1)
-    jg _setPixelEnd
+    jg .end
     cmp sil, BYTE (DIMENSION_Y - 1)
-    jg _setPixelEnd
+    jg .end
 
     cmp dil, BYTE 0
-    jl _setPixelEnd
+    jl .end
     cmp sil, BYTE 0
-    jl _setPixelEnd
+    jl .end
 
     xor rax, rax
     mov al, sil
@@ -55,7 +55,7 @@ setPixel:
 
     mov [rsi], dl
 
-    _setPixelEnd:
+    .end:
     pop r12
     pop rax
     mov rsp, rbp
@@ -71,19 +71,19 @@ drawGameBoard:
     mov [rbp - 4], BYTE 0 ; y loop counter
     mov [rbp - 5], BYTE 0 ; x loop counter
 
-    _gameBoardYLoop:
+    .yLoop:
     ; draw line in the middle
     mov sil, [rbp - 4]
     and sil, 1
     cmp sil, 0
-    je _gameBoardYLoopSkipMiddle
+    je .yLoopSkipMiddle
 
     mov dil, (DIMENSION_X / 2)
     mov sil, [rbp - 4]
     mov dl, '|'
     call setPixel
 
-    _gameBoardYLoopSkipMiddle:
+    .yLoopSkipMiddle:
     ; draw left and right side border
     mov dil, (DIMENSION_X - 1)
     mov sil, [rbp - 4]
@@ -96,9 +96,9 @@ drawGameBoard:
 
     inc BYTE [rbp - 4]
     cmp BYTE [rbp - 4], BYTE DIMENSION_Y
-    jl _gameBoardYLoop
+    jl .yLoop
 
-    _gameBoardXLoop:
+    .xLoop:
     ; draw upper and lower side border
     mov dil, [rbp - 5]
     mov sil, 0
@@ -111,7 +111,7 @@ drawGameBoard:
 
     inc BYTE [rbp - 5]
     cmp BYTE [rbp - 5], BYTE DIMENSION_X
-    jl _gameBoardXLoop 
+    jl .xLoop 
 
     pop rbx
     mov rsp, rbp
@@ -127,7 +127,7 @@ drawBorder:
     mov [rbp - 4], BYTE 0 ; y loop counter
     mov [rbp - 5], BYTE 0 ; x loop counter
 
-    _drawBorderYLoop:
+    .yLoop:
     ; draw left and right side border
     mov dil, (DIMENSION_X - 1)
     mov sil, [rbp - 4]
@@ -140,9 +140,9 @@ drawBorder:
 
     inc BYTE [rbp - 4]
     cmp BYTE [rbp - 4], BYTE DIMENSION_Y
-    jl _drawBorderYLoop
+    jl .yLoop
 
-    _drawBorderXLoop:
+    .xLoop:
     ; draw upper and lower side border
     mov dil, [rbp - 5]
     mov sil, 0
@@ -155,7 +155,7 @@ drawBorder:
 
     inc BYTE [rbp - 5]
     cmp BYTE [rbp - 5], BYTE DIMENSION_X
-    jl _drawBorderXLoop 
+    jl .xLoop 
 
     pop rbx
     mov rsp, rbp
@@ -175,7 +175,7 @@ drawBuffer:
     mov [rbp - 4], BYTE 0 ; x loop counter
     mov [rbp - 5], BYTE 0 ; y loop counter
 
-    _drawBufferLoop:
+    .loop:
     ; calculate buffer index
     mov [rbp - 7], WORD 0
     xor rax, rax
@@ -195,16 +195,16 @@ drawBuffer:
     xor rdx, rdx
     lea rdi, [emptyPixelFormat]
     cmp sil, ' '
-    je _drawBufferPrintf
+    je .printfCall
     lea rdi, [pixelFormat]
-    _drawBufferPrintf:
+    .printfCall:
     call printf wrt ..plt
 
     inc BYTE[rbp - 4]
 
     ; if not end of line, jump to loop
     cmp BYTE[rbp - 4], BYTE DIMENSION_X
-    jl _drawBufferLoop
+    jl .loop
 
     ; else handle end of the line
     lea rdi, [newLineFormat]
@@ -213,7 +213,7 @@ drawBuffer:
     mov [rbp - 4], BYTE 0 ; zero x counter
     inc BYTE[rbp - 5]
     cmp BYTE[rbp - 5], BYTE DIMENSION_Y
-    jl _drawBufferLoop
+    jl .loop
 
     pop rbx
     mov rsp, rbp
@@ -228,14 +228,14 @@ clearBuffer:
 
     mov QWORD [rbp - 8], ((DIMENSION_X * DIMENSION_Y) - 1)
 
-    _clearBufferLoop:
+    .loop:
     mov rax, [rbp - 8]
     dec QWORD [rbp - 8]
     lea rbx, [graphicsBuffer]
     add rbx, rax
     mov BYTE [rbx], ' '
     cmp QWORD [rbp - 8], 0
-    jne _clearBufferLoop
+    jne .loop
 
     pop rbx
     mov rsp, rbp
@@ -259,10 +259,10 @@ drawSprite:
     mov [rbp - 12], dil ; row start 
     mov [rbp - 13], cl ; character counter
 
-    _drawSpriteLoop:
+    .loop:
     mov dl, [rdx]
     cmp dl, 0
-    je _drawSpriteEnd
+    je .end
 
     mov dil, [rbp - 1]
     mov sil, [rbp - 2]
@@ -271,7 +271,7 @@ drawSprite:
     inc BYTE [rbp - 1]
     dec BYTE [rbp - 13]
     cmp BYTE [rbp - 13], 0
-    jne _drawSpriteSkipRowInc
+    jne .skipRow
 
     ; restore x position (row beginning)
     mov dil, [rbp - 12]
@@ -284,13 +284,13 @@ drawSprite:
     ; increment row
     inc BYTE [rbp - 2]
 
-    _drawSpriteSkipRowInc:
+    .skipRow:
 
     inc QWORD [rbp - 10]
     mov rdx, [rbp - 10]
-    jmp _drawSpriteLoop
+    jmp .loop
 
-    _drawSpriteEnd:
+    .end:
     mov rsp, rbp
     pop rbp
     ret
